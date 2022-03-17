@@ -49,6 +49,19 @@ async function Del(obj,res){
    }
 }
 
+async function Update(obj,res){
+    try{
+       const UpdState= await User.updateOne({_id: obj.id },obj)
+       console.log(UpdState)
+       if(UpdState){
+           res.send("Updated Successfully")
+        }
+   }catch (e){
+       console.log(e.message)
+       res.send("Error Occurred")
+   }
+}
+
 app.get('/', (req, res) => {
     res.send('Server Running')
 })
@@ -66,6 +79,8 @@ app.post('/delete', function (req, res) {
 Del(req.body,res)
 })
 
-app.post('/update', function (req, res) {})
+app.post('/update', function (req, res) {
+Update(req.body,res)
+})
 
 app.listen(process.env.PORT || 5000)
