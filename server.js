@@ -5,9 +5,8 @@ const mongoose = require('mongoose')
 const User = require('./User')
 app.use(express.json())
 
-app.use(cors({
-origin: "*",
-})
+app.use(cors())
+app.options('*', cors())
 
 mongoose.connect("mongodb+srv://slimshady313:peaky313@cluster0.noa1o.mongodb.net/Cluster0?retryWrites=true&w=majority", () => {
 
