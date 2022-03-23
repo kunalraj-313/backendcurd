@@ -6,7 +6,7 @@ const User = require('./User')
 app.use(express.json())
 
 app.use(cors({
-origin: "*",
+origin: "https://kunal-mern-curd.netlify.app",
 })
 
 mongoose.connect("mongodb+srv://slimshady313:peaky313@cluster0.noa1o.mongodb.net/Cluster0?retryWrites=true&w=majority", () => {
