@@ -1,90 +1,25 @@
-const express = require('express')
-const app = express()
-const cors=require('cors')
-const mongoose = require('mongoose')
-const User = require('./User')
-app.use(express.json())
+const express = require("express");
+const mongoose = require("mongoose");
+const User = require("./models/userModal");
 
-app.use(cors())
-app.options('*', cors())
+const userRoutes = require("./routes/user");
 
-mongoose.connect("mongodb+srv://slimshady313:peaky313@cluster0.noa1o.mongodb.net/Cluster0?retryWrites=true&w=majority", () => {
+const app = express();
 
-    console.log('connected')
-})
+app.use(express.json());
+const cors = require("cors");
 
+app.use(cors());
+app.options("*", cors());
 
-async function add(obj,res){
-     try{
-        const user= await User.create(obj)
-        if(user){
-            res.send("Data added Successfully")
-        }
-    }catch (e){
-        res.send("Encountered Error while adding Data")
-        console.log(e.message)
-    }
-}
+app.use("/cash-manager/user", userRoutes);
 
-async function search(obj,res){
-    try{
-       const result= await User.find(obj)
-       if(result){
-           console.log(obj)
-           console.log(result)
-           res.send(result)
-       }
-   }catch (e){
-       res.send("User not found")
-       console.log(e.message)
-   }
-}
+mongoose.connect(`${process.env.MONGO_URI}`, () => {
+  console.log("Connected to Database");
+});
 
-async function Del(obj,res){
-    try{
-       const DelStat= await User.deleteOne(obj)
-       console.log(DelStat)
-       if(DelStat){
-           res.send("Deleted Successfully")
-        }
-   }catch (e){
-       console.log(e.message)
-       res.send("Erro Occurred")
-   }
-}
+app.get("/", (req, res) => {
+  res.send("Server Running");
+});
 
-async function Update(obj,res){
-    try{
-       const UpdState= await User.updateOne({_id: obj.id },obj)
-       console.log(UpdState)
-       if(UpdState){
-           res.send("Updated Successfully")
-        }
-   }catch (e){
-       console.log(e.message)
-       res.send("Error Occurred")
-   }
-}
-
-app.get('/', (req, res) => {
-    res.send('Server Running')
-})
-
-app.post('/search', (req, res) => {
-   console.log(req.body)
-   search(req.body,res)
-})
-
-app.post('/add', function (req, res) {
-add(req.body,res)
-})
-
-app.post('/delete', function (req, res) {
-Del(req.body,res)
-})
-
-app.post('/update', function (req, res) {
-Update(req.body,res)
-})
-
-app.listen(process.env.PORT || 5000)
+app.listen(process.env.PORT || 5000);
