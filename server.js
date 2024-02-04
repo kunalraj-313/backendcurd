@@ -1,18 +1,20 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const User = require("./models/userModal");
+const cors = require("cors");
+require("dotenv").config();
 
 const userRoutes = require("./routes/user");
+const shopRoutes = require("./routes/shop");
+
 
 const app = express();
 
 app.use(express.json());
-const cors = require("cors");
-
 app.use(cors());
 app.options("*", cors());
 
-app.use("/cash-manager/user", userRoutes);
+app.use("/cash-manager/", userRoutes);
+app.use("/cash-manager/",shopRoutes)
 
 mongoose.connect(`${process.env.MONGO_URI}`, () => {
   console.log("Connected to Database");

@@ -1,8 +1,19 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
+const Counter= require('../models/counterModel')
+
 
 const userSchema = new mongoose.Schema({
+  id:{
+    type:Number,
+    required:true,
+    unique:true
+  },
+  name:{
+    type: String,
+    required: true,
+  },
   email: {
     type: String,
     required: true,
@@ -31,8 +42,8 @@ userSchema.statics.login = async function (email, password) {
   return user;
 };
 
-userSchema.statics.signup = async function (email, password) {
-  if (!email || !password) {
+userSchema.statics.signup = async function (email, password,name) {
+  if (!email || !password || !name) {
     throw Error("All fields are manadatory");
   }
   if (!validator.isEmail(email)) {
@@ -46,10 +57,17 @@ userSchema.statics.signup = async function (email, password) {
     throw Error("Email already in use");
   }
 
+  const update = await Counter.findOneAndUpdate(
+    { _id: "userId" }, 
+    { $inc: { seq: 1 } }, 
+    { new: true, upsert: true }
+  );
+  const userId = update.seq;
+
   const salt = await bcrypt.genSalt();
   const hash = await bcrypt.hash(password, salt);
 
-  const user = await this.create({ email, password: hash });
+  const user = await this.create({ id: userId, email, password: hash ,name});
 
   return user;
 };
